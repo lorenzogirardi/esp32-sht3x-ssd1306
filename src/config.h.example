@@ -1,0 +1,11 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+// WiFi
+const char* WIFI_SSID = "YOUR_SSID";
+const char* WIFI_PASS = "YOUR_PASSWORD";
+
+// InfluxDB v1
+const char* INFLUXDB_URL = "http://YOUR_INFLUXDB_HOST:8086/write?db=YOUR_DATABASE";
+
+#endif
