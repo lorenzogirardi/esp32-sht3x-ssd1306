@@ -2,6 +2,15 @@
 
 Indoor weather station with ESP32, SHT3x temperature/humidity sensor and SSD1306 OLED display. Sends data to InfluxDB via HTTP.
 
+<p align="center">
+  <a href="https://res.cloudinary.com/ethzero/image/upload/ai/esp32-sht3x-ssd1306/sensor_full_working.png">
+    <img src="https://res.cloudinary.com/ethzero/image/upload/ai/esp32-sht3x-ssd1306/sensor_full_working.png" width="300" alt="Sensor working">
+  </a>
+  <a href="https://res.cloudinary.com/ethzero/image/upload/ai/esp32-sht3x-ssd1306/sensor_forced_humidity.png">
+    <img src="https://res.cloudinary.com/ethzero/image/upload/ai/esp32-sht3x-ssd1306/sensor_forced_humidity.png" width="300" alt="Sensor forced humidity">
+  </a>
+</p>
+
 ## Features
 
 - Temperature and humidity reading (SHT3x, high repeatability)
@@ -230,6 +239,12 @@ GROUP BY time(1h)
 ### Grafana Dashboard
 
 A pre-built dashboard is included in `grafana-dashboard.json`.
+
+<p align="center">
+  <a href="https://res.cloudinary.com/ethzero/image/upload/ai/esp32-sht3x-ssd1306/grafana-esp32-weather-station-esp32.png">
+    <img src="https://res.cloudinary.com/ethzero/image/upload/ai/esp32-sht3x-ssd1306/grafana-esp32-weather-station-esp32.png" width="600" alt="Grafana Dashboard">
+  </a>
+</p>
 
 **Panels included:**
 - Temperature / Dew Point / Heat Index (graph + stats)
