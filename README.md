@@ -136,13 +136,20 @@ SHT3x Sensor
      +--------->|calcHeatIndex|---->| Heat Index  |
      |          |    NOAA     |     |    (C)      |
      v          +-------------+     +-------------+
-+---------+
++---------+                           * see note
 |Humidity |     +-------------+     +-------------+
 |  (%)    |---->|getComfortZon|---->| OK/Cold/Hot |
 +---------+     |   20-26C    |     | Dry/Humid   |
                 |   30-60%    |     +-------------+
                 +-------------+
 ```
+
+**\* Heat Index Note:** The Heat Index is only calculated when temperature exceeds 26.7°C (80°F). Below this threshold, humidity has negligible effect on perceived temperature, so the actual temperature is returned. This follows the NOAA formula design, which measures heat stress rather than general comfort.
+
+| Temperature | Humidity Effect |
+|-------------|-----------------|
+| < 27°C | Negligible - humidity doesn't affect perception |
+| > 27°C | Significant - high humidity prevents sweat evaporation |
 
 ---
 
