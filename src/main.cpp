@@ -13,6 +13,7 @@ void drawHouse(int x, int y);
 void updateDisplay(float temp, float hum, float dew, float hi, const char* comfort);
 void displayError();
 void sendToInfluxDB(float temp, float hum, float dew, float hi, const char* comfort);
+void sendSystemStats();
 
 // I2C
 #define SDA_PIN 21
@@ -173,6 +174,7 @@ void loop() {
   if (now - lastSendTime >= SEND_INTERVAL) {
     lastSendTime = now;
     sendToInfluxDB(lastTemp, lastHum, lastDew, lastHeatIdx, lastComfort);
+    sendSystemStats();
   }
 }
 
@@ -256,6 +258,43 @@ void sendToInfluxDB(float temp, float hum, float dew, float hi, const char* comf
     Serial.println(httpCode);
   } else {
     Serial.print("HTTP error: ");
+    Serial.println(http.errorToString(httpCode));
+  }
+
+  http.end();
+}
+
+void sendSystemStats() {
+  if (WiFi.status() != WL_CONNECTED) {
+    return;
+  }
+
+  HTTPClient http;
+  http.begin(INFLUXDB_URL);
+  http.addHeader("Content-Type", "text/plain");
+
+  char payload[300];
+  snprintf(payload, sizeof(payload),
+           "esp32_stats,host=esp32 "
+           "free_heap=%lui,min_free_heap=%lui,heap_size=%lui,"
+           "rssi=%di,uptime=%lui,"
+           "cpu_freq=%ui,flash_size=%lui,sketch_size=%lui,free_sketch=%lui",
+           ESP.getFreeHeap(),
+           ESP.getMinFreeHeap(),
+           ESP.getHeapSize(),
+           WiFi.RSSI(),
+           millis() / 1000,
+           ESP.getCpuFreqMHz(),
+           ESP.getFlashChipSize(),
+           ESP.getSketchSize(),
+           ESP.getFreeSketchSpace());
+
+  Serial.print("Stats: ");
+  Serial.println(payload);
+
+  int httpCode = http.POST(payload);
+  if (httpCode <= 0) {
+    Serial.print("Stats HTTP error: ");
     Serial.println(http.errorToString(httpCode));
   }
 

@@ -30,6 +30,7 @@ Template available in `src/config.h.example`
 | `src/config.h` | Credentials (local only) |
 | `src/config.h.example` | Credentials template |
 | `platformio.ini` | PlatformIO build config |
+| `grafana-dashboard.json` | Grafana dashboard template |
 
 ## Build Commands
 ```bash
@@ -43,6 +44,10 @@ pio device monitor   # Serial monitor (run in separate terminal)
 Measurement: sensor_data
 Tags: host=esp32, comfort=<status>
 Fields: temp, humidity, dewpoint, heatindex
+
+Measurement: esp32_stats
+Tags: host=esp32
+Fields: free_heap, min_free_heap, heap_size, rssi, uptime, cpu_freq, flash_size, sketch_size, free_sketch
 ```
 
 ## Features Implemented
@@ -54,6 +59,7 @@ Fields: temp, humidity, dewpoint, heatindex
 - [x] WiFi with auto-reconnect
 - [x] InfluxDB v1 HTTP POST
 - [x] Non-blocking loop (millis-based)
+- [x] ESP32 system metrics (heap, RSSI, uptime, CPU freq, flash)
 
 ## Potential Future Enhancements
 - [ ] Add second sensor for outdoor readings
@@ -65,3 +71,14 @@ Fields: temp, humidity, dewpoint, heatindex
 
 ## Repository
 https://github.com/lorenzogirardi/esp32-sht3x-ssd1306
+
+## Claude Instructions
+
+### On Every Commit
+When committing changes to the codebase:
+1. **Update README.md** to reflect any new features, changes to existing functionality, or configuration changes
+2. **Update CLAUDE.md** to keep the project context current:
+   - Update "Features Implemented" checklist
+   - Update "InfluxDB Schema" if measurements/fields change
+   - Move completed items from "Potential Future Enhancements"
+3. Include both documentation updates in the same commit as the code changes

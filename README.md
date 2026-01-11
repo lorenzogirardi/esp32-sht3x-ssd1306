@@ -10,6 +10,7 @@ Indoor weather station with ESP32, SHT3x temperature/humidity sensor and SSD1306
 - **Comfort Zone** detection
 - OLED 128x32 display output
 - InfluxDB v1 metrics export (line protocol)
+- **ESP32 System Metrics** (heap, RSSI, uptime, etc.)
 - Automatic WiFi reconnection
 
 ---
@@ -198,6 +199,54 @@ GROUP BY time(1h)
 SELECT * FROM sensor_data WHERE comfort = 'Hot+Hum'
 ```
 
+### ESP32 System Metrics
+
+A separate measurement `esp32_stats` is sent with board health metrics:
+
+```
+esp32_stats,host=esp32 free_heap=45000i,min_free_heap=32000i,heap_size=327680i,rssi=-65i,uptime=3600i,cpu_freq=240i,flash_size=4194304i,sketch_size=957161i,free_sketch=352256i
+```
+
+| Field | Description |
+|-------|-------------|
+| `free_heap` | Available RAM (bytes) |
+| `min_free_heap` | Lowest RAM ever reached (bytes) |
+| `heap_size` | Total RAM (bytes) |
+| `rssi` | WiFi signal strength (dBm) |
+| `uptime` | Seconds since boot |
+| `cpu_freq` | CPU frequency (MHz) |
+| `flash_size` | Total flash memory (bytes) |
+| `sketch_size` | Firmware size (bytes) |
+| `free_sketch` | Available firmware space (bytes) |
+
+Example query:
+```sql
+-- Monitor heap usage over time
+SELECT mean(free_heap), min(min_free_heap) FROM esp32_stats
+WHERE time > now() - 24h
+GROUP BY time(1h)
+```
+
+### Grafana Dashboard
+
+A pre-built dashboard is included in `grafana-dashboard.json`.
+
+**Panels included:**
+- Temperature / Dew Point / Heat Index (graph + stats)
+- Humidity (graph + stat)
+- Comfort Zone (color-coded status)
+- WiFi Signal strength (graph + stat)
+- Uptime
+- CPU Frequency
+- Heap Memory (graph + gauges)
+- Flash/Sketch size
+
+**To import:**
+1. Go to Grafana → **Dashboards → Import**
+2. Upload `grafana-dashboard.json` or paste its content
+3. Select your InfluxDB datasource
+4. Click **Import**
+
 ---
 
 ## Configuration
@@ -286,14 +335,49 @@ void loop() {}
 
 ```
 esp32-sht3x-ssd1306/
-├── platformio.ini       # PlatformIO configuration
-├── README.md            # This documentation
-├── README_ita.md        # Italian documentation
+├── platformio.ini          # PlatformIO configuration
+├── README.md               # This documentation
+├── README_ita.md           # Italian documentation
+├── grafana-dashboard.json  # Grafana dashboard template
 └── src/
-    ├── config.h         # Your credentials (not tracked)
-    ├── config.h.example # Template for credentials
-    └── main.cpp         # Source code
+    ├── config.h            # Your credentials (not tracked)
+    ├── config.h.example    # Template for credentials
+    └── main.cpp            # Source code
 ```
+
+---
+
+## I2C Pull-up Resistors
+
+The I2C bus requires pull-up resistors on SDA and SCL lines. In most cases, **you don't need to add external resistors** because:
+
+1. ESP32 has internal pull-ups (~45kΩ) enabled by software
+2. Most SHT3x and SSD1306 modules have pull-ups on their PCB
+
+### When to Add External Pull-ups
+
+Add 4.7kΩ resistors if you experience:
+- Intermittent reading errors
+- Communication failures
+- Long wires (>20cm)
+- Multiple devices on the bus
+
+### Wiring Diagram
+
+```
+              3.3V
+               │
+          ┌────┴────┐
+          │         │
+        4.7kΩ     4.7kΩ
+          │         │
+          │         │
+GPIO21 ───┴─────────│───── SDA (sensors)
+                    │
+GPIO22 ─────────────┴───── SCL (sensors)
+```
+
+Each resistor connects the data line (SDA or SCL) to 3.3V. Place them anywhere on the circuit between 3.3V and the respective line.
 
 ---
 
