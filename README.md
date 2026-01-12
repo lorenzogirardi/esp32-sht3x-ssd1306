@@ -403,6 +403,6 @@ Each resistor connects the data line (SDA or SCL) to 3.3V. Place them anywhere o
 
 ---
 
-## License
+## License 
 
 MIT License
