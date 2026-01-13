@@ -248,8 +248,8 @@ GROUP BY time(1h)
 A pre-built dashboard is included in `grafana-dashboard.json`.
 
 <p align="center">
-  <a href="https://res.cloudinary.com/ethzero/image/upload/ai/esp32-sht3x-ssd1306/grafana-esp32-weather-station-esp32.png">
-    <img src="https://res.cloudinary.com/ethzero/image/upload/ai/esp32-sht3x-ssd1306/grafana-esp32-weather-station-esp32.png" width="600" alt="Grafana Dashboard">
+  <a href="https://res.cloudinary.com/ethzero/image/upload/ai/esp32-sht3x-ssd1306/grafana-esp32-weather-station-esp32.png?v=2">
+    <img src="https://res.cloudinary.com/ethzero/image/upload/ai/esp32-sht3x-ssd1306/grafana-esp32-weather-station-esp32.png?v=2" width="600" alt="Grafana Dashboard">
   </a>
 </p>
 
